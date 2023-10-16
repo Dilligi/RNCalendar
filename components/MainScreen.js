@@ -5,29 +5,24 @@ import CalendarPicker from 'react-native-calendar-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getDateSchedule } from '../utils/getDateSchedule';
 
+let timeClasses = {
+  0: '08:00-09:35',
+  1: '09:50-11:25',
+  2: '11:55-13:30',
+  3: '13:45-15:20',
+  4: '15:50-17:25',
+  5: '17:40-19:15',
+  6: '19:30-21:05'
+}
+
 export default function MainScreen() {
-  const [task, setTask] = useState();
   const [classes, setClasses] = useState([]);
-  const [taskItems, setTaskItems] = useState([]);
   const [selectedDate, setSelectedDate] = useState({
     year: -1,
     month: -1,
     day: -1,
     dayOfWeek: -1
   });
-  let reg = /\d{4}-\d{2}-\d{2}/;
-
-  const handleAddTask = () => {
-    Keyboard.dismiss();
-    setTaskItems([...taskItems, task])
-    setTask(null);
-  }
-
-  const completeTask = (index) => {
-    let itemsCopy = [...taskItems];
-    itemsCopy.splice(index, 1);
-    setTaskItems(itemsCopy)
-  }
 
   useEffect(() => {
     (async () => {
@@ -87,7 +82,7 @@ export default function MainScreen() {
           {
             classes.map((item, index) => {
               return (
-                <Task key={index} text={item ? item : 'Окно'} /> 
+                <Task key={index} text={item ? item : 'Окно'}  classNum={index + 1} classTime={timeClasses[index]} /> 
               )
             })
           }
@@ -111,7 +106,8 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 24,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    marginTop: 20
   },
   items: {
     marginTop: 30,

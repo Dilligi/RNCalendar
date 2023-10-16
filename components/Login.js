@@ -29,14 +29,21 @@ export default function Login({ navigation }) {
     getGroupURL(curGroup)
     .then((url) => {
 
+      if (!url) {
+        setIsWrong(true)
+        return null;
+      }
+
       return Promise.all([
         AsyncStorage.setItem('group-url', url),
         AsyncStorage.setItem('group-name', curGroup)
       ])
     })
     .then((res) => {
-      setIsLoading(false)
-      navigation.navigate('Home')
+      if(res) {
+        setIsLoading(false)
+        navigation.navigate('Home')
+      }
     })
     .catch(() => {
       setIsLoading(false)

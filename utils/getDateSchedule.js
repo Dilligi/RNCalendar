@@ -121,10 +121,39 @@ function getIuesSchedule(url, date) {
     })
 }
 
+function getIrtsuSchedule(url, date) {
+    let weekNumber = getWeekNumber(date);
+
+    if (date.dayOfWeek === 0 || date.year !== (new Date()).getFullYear()) return Promise.resolve([]);
+
+    return axios.create({ timeout: 5000 }).get(`https://rtf.sfedu.ru/raspis/${url}&week=${weekNumber}`).then((html) => {
+        const $ = cheerio.load(html.data);
+        let curClasses = []
+        let trParent = null;
+        let curDay = date.day < 10 ? `0${date.day}` : date.day;
+        let curDateString = `${dayOfWeek[date.dayOfWeek]},${curDay}  ${monthOfYear[date.month]}`;
+
+        $('td').each((i, elem) => {
+            if($(elem).text().trim().toLocaleLowerCase() === curDateString.toLocaleLowerCase()) {
+                trParent = $(elem).closest('tr');
+                return 0;
+            }
+        });
+
+        if (trParent && !curClasses.length) {
+            $(trParent).children('td').each((i, td) => {
+                curClasses.push($(td).text().split('\n').join(''))
+            })
+        }
+
+        return curClasses.slice(1);
+    });
+}
+
 export function getDateSchedule(instName, url, date) {
     switch (instName) {
         case 'РТ':
-            return null;
+            return getIrtsuSchedule(url, date);
         case 'КТ':
             return getIctibSchedule(url, date);
         case 'УЭ':

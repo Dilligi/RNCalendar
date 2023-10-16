@@ -4,7 +4,6 @@ import * as cheerio from 'cheerio';
 import iconv from 'iconv-lite';
 
 function getIrtsuURL(groupName) {
-    return Promise.resolve('?s1')
 
     return axios.create({ timeout: 5000 }).get('https://rtf.sfedu.ru/raspis/?raspisan').then((html) => {
         const $ = cheerio.load(html.data);
